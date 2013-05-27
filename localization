@@ -1,0 +1,65 @@
+# Number of Grid Lines in 1D World
+worldSize = 10
+
+# Probability Vector (Probability vs. Grid Line)
+p = []
+
+# Known Geometry of World
+worldDistances = (3.0,3.0,3.0,3.0,3.0,3.0,1.0,1.0,1.0,3.0)
+
+# Sensor Probability Data
+pSensorAccurate = 0.7
+pSensorInaccurate = 0.3
+
+# Motion Probability Data
+pMoveAccurate = 0.8
+pMoveUndershoot = 0.1
+pMoveOvershoot = 0.1
+
+# Establish Uniform Normalized Vector
+def initialBelief(p, _worldsize):
+    for i in range(_worldsize):
+        p.append(1./_worldsize)
+
+# Normalize a Probability Vector
+def normalize(p):
+    s = sum(p)
+    for i in range(len(p)):
+        p[i] = p[i]/s
+    return p
+
+# Apply Sense Data to Refine Probabilities
+def sense(p, Measurement):
+    q = []
+    foundObstacle = (abs(1-Measurement)<abs(3-Measurement))
+    print foundObstacle
+    for i in range(len(p)):
+        if (foundObstacle and worldDistances[i] == 1.0):
+            q.append(p[i]*pSensorAccurate)
+        elif (foundObstacle and worldDistances[i] == 3.0):
+            q.append(p[i]*pSensorInaccurate)
+        elif (not foundObstacle and worldDistances[i] == 1.0):
+            q.append(p[i]*pSensorInaccurate)
+        else:
+            q.append(p[i]*pSensorAccurate)
+    print q
+    p = normalize(q)
+    return q
+
+
+# Apply Inexact Motion
+
+
+
+
+
+
+
+
+
+#Actual Program
+initialBelief(p, worldSize)
+print p
+p = sense(p, 2)
+print p
+
